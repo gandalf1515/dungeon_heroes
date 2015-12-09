@@ -9,6 +9,7 @@
 
 #define START_MAP_X 600
 #define START_MAP_Y 100
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -20,8 +21,7 @@ sf::Vector2i  calculate_tiles(int i , int j )
     vret.x = i*128;
     vret.y = j*128;
     return vret;
-
-
+	
 }
 
 class iso_case{

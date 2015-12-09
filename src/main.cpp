@@ -74,6 +74,7 @@ if (!texture_sol.loadFromFile("floor.png"))
 
 sf::Vector2i vpos =calculate_tiles(8,6);
 std::cout << vpos.x  << " : "<<vpos.y  << std::endl ;
+//if (!skull.loadFromFile("floor_perso.png") )
 if (!skull.loadFromFile("./skeleton_1.png", sf::IntRect(vpos.x,vpos.y,128, 128)))
 {
     std::cout << "error" << "skeleton_1.png" <<  std::endl;
@@ -83,7 +84,8 @@ if (!skull.loadFromFile("./skeleton_1.png", sf::IntRect(vpos.x,vpos.y,128, 128))
 
 
 // chargement d'un sous-rectangle de 32x32 démarrant en (10, 10)
-if (!texture_mur.loadFromFile("./iso_dungeon_walls_by_pfunked.png", sf::IntRect(32, 0,128, 128)))
+if (!texture_mur.loadFromFile("./iso_dungeon_walls_by_pfunked.png", sf::IntRect(32, 0,64, 112)))
+//if (!texture_mur.loadFromFile("./iso_dungeon_walls_by_pfunked.png", sf::IntRect(32, 0,64, 112)))
 {
 	std::cout << "error" << " iso_dungeon_walls_by_pfunked.png" << std::endl;
 //	exit(0);
@@ -110,32 +112,34 @@ if (!texture.loadFromFile("tile_comparison_iso_3d.png", sf::IntRect(10, 10, 32, 
 //// CACULATE SPRITE POSITION .////
 
 
-	for (int j = 0; j < 10; j++)
+for (int i = 0; i < 8; i++)
+	
     {
 
 
-		for (int i = 0; i < 8; i++)
+		for (int j = 0; j < 10; j++)
          {              
                 // 1 MUR
                  if(tile_map[i][j] == 1 )
                  {
                  
-				  v_sprite.push_back(drawable_obj(texture_sol, iso_case(i, j)));
-				  v_sprite.push_back(drawable_obj(texture_mur, iso_case(i, j, 74)));                
+				 // v_sprite_layer0.push_back(drawable_obj(skull, iso_case(i, j)));
+				  v_sprite_layer0.push_back(drawable_obj(texture_mur, iso_case(i, j,64)));
+				//v_sprite_layer1.push_back(drawable_obj(texture_mur, iso_case(i, j,64)));
 
                 }
                 //1 SQUELETTE
                else if(tile_map[i][j] == 2 )
                 {
 
-				v_sprite.push_back(drawable_obj(skull, iso_case(i, j)));
+					v_sprite_layer0.push_back(drawable_obj(skull, iso_case(i, j)));
 
 
                 }
 				 // 1 SOL
                 else if(tile_map[i][j] == 0 )
                   {
-					  v_sprite.push_back(drawable_obj(texture_sol, iso_case(i, j)));
+					  v_sprite_layer0.push_back(drawable_obj(texture_sol, iso_case(i, j)));
                 }
               
 
@@ -146,7 +150,11 @@ if (!texture.loadFromFile("tile_comparison_iso_3d.png", sf::IntRect(10, 10, 32, 
 
     }
 
-
+	for (auto &dw_obj : v_sprite_layer0)
+	{
+		std::cout << dw_obj.sp.getPosition().x << "," << dw_obj.sp.getPosition().y << std::endl;
+	
+	}
 bool is_press=false;
 /////////////////////////////////
     while (window.isOpen())
@@ -176,31 +184,45 @@ bool is_press=false;
 sf::View view = window.getDefaultView();
 //view.zoom(0.75f);
 window.setView(view);
-		
+//	window.clear();
+//we must when draw perso 
+//std::cout << perso_monster.iso_c.i*perso_monster.iso_c.j << " -- " << index << std::endl;
+
+
+/*if ((perso_monster.iso_c.i*perso_monster.iso_c.j) == index)
+{
+std::cout << perso_monster.iso_c.i*perso_monster.iso_c.j << " -- " << index << std::endl;
+window.draw(perso_monster.sp);
+
+}index++;
+else */
+
+
+//std::cin.get();
 		int index = 0;
-        for(auto &dw_obj : v_sprite )
-        {
-		//	window.clear();
-			//we must when draw perso 
-			//std::cout << perso_monster.iso_c.i*perso_monster.iso_c.j << " -- " << index << std::endl;
-		
-			
-				/*if ((perso_monster.iso_c.i*perso_monster.iso_c.j) == index)
-				{
-					std::cout << perso_monster.iso_c.i*perso_monster.iso_c.j << " -- " << index << std::endl;
-					window.draw(perso_monster.sp);
-					
-				}
-				else */
-					window.draw(dw_obj.sp);
-				
-			index++;
-			//std::cin.get();
-        }
+		//draw layer 0
+
 		window.draw(perso_monster.sp);
+		for (auto &dw_obj : v_sprite_layer0)
+		{
+			//std::cout << dw_obj.sp.getPosition().x << "," << dw_obj.sp.getPosition().y << "|";
+			if(perso_monster.sp.getPosition().x == dw_obj.sp.getPosition().x&&
+				perso_monster.sp.getPosition().y == dw_obj.sp.getPosition().y)
+				window.draw(perso_monster.sp);
+			else
+			window.draw(dw_obj.sp);
+			
+
+		}
+		
+		
+		//draw layer 1
+		for (auto &dw_obj : v_sprite_layer1)window.draw(dw_obj.sp);		
+	
 		window.display();
+		//while (1) { Sleep(1000); }
        // window.display();
     }
-
+	
     return 0;
 }
